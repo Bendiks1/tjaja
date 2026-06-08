@@ -69,6 +69,17 @@ func test_act_1_loads_and_references_its_enemy_pools() -> void:
 	assert_eq(act.elite_enemies[0].id, &"charnel_brute")
 
 
+func test_revenant_character_loads_and_builds_its_starting_deck() -> void:
+	var character: CharacterData = load("res://data/characters/revenant.tres")
+	assert_not_null(character)
+	assert_eq(character.id, &"revenant")
+	assert_gt(character.starting_hp, 0)
+
+	var definitions: Array[CardDefinition] = character.build_starting_deck()
+	assert_eq(definitions.size(), 10)
+	assert_eq(definitions.size(), character.starting_deck.size())
+
+
 func test_starting_deck_can_be_assembled_from_loaded_card_data() -> void:
 	# The actual starting deck composition: 5 Strike, 4 Defend, 1 Soul Rend.
 	var strike: CardData = load("res://data/cards/strike.tres")

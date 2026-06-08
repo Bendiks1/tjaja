@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://data/characters/character_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/cards/strike.tres" id="2_strike"]
+[ext_resource type="Resource" path="res://data/cards/defend.tres" id="3_defend"]
+[ext_resource type="Resource" path="res://data/cards/soul_rend.tres" id="4_soul_rend"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"revenant"
+display_name = "The Revenant"
+description = "An undead warrior who trades its own blood for power. Strength grows with sacrifice."
+starting_hp = 70
+starting_energy = 3
+starting_deck = [ExtResource("2_strike"), ExtResource("2_strike"), ExtResource("2_strike"), ExtResource("2_strike"), ExtResource("2_strike"), ExtResource("3_defend"), ExtResource("3_defend"), ExtResource("3_defend"), ExtResource("3_defend"), ExtResource("4_soul_rend")]
