@@ -60,6 +60,7 @@ func start_encounter(
 func resume_encounter(combat: CombatState) -> void:
 	_combat = combat
 	_awaiting_target_for = -1
+	_end_turn_button.disabled = false
 	_rebuild_enemy_views()
 	_refresh_player_stats()
 	_refresh_enemy_views()

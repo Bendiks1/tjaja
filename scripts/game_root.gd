@@ -71,6 +71,7 @@ func _on_new_run_requested() -> void:
 
 func _on_character_chosen(character: CharacterData) -> void:
 	RunState.start_new_run(character, randi())
+	AdStub.reset_for_new_run()
 	SaveSystem.save(RunState)
 	_show_map()
 
@@ -162,7 +163,27 @@ func _persist_combat_snapshot() -> void:
 	SaveSystem.save(RunState)
 
 
+## Offers a once-per-run rewarded-ad revive on defeat. Returns true if the
+## player accepted and is back in the fight — the caller should treat the
+## encounter as still ongoing in that case.
+func _try_revive() -> bool:
+	if not AdStub.can_offer_revive():
+		return false
+	if not AdStub.watch_ad_to_revive():
+		return false
+
+	var combat: CombatState = _combat_screen._combat
+	combat.player.current_hp = int(combat.player.max_hp * AdStub.REVIVE_HP_FRACTION)
+	combat.player.reset_block()
+	_combat_screen.resume_encounter(combat)
+	_persist_combat_snapshot()
+	return true
+
+
 func _on_combat_finished(outcome: CombatState.Outcome) -> void:
+	if outcome == CombatState.Outcome.DEFEAT and _try_revive():
+		return
+
 	RunState.combat_snapshot = {}
 	RunState.current_hp = max(_combat_screen._combat.player.current_hp, 0)
 

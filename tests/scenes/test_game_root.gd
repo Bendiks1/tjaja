@@ -57,6 +57,26 @@ func test_finishing_combat_clears_the_snapshot_and_shows_the_reward_screen() -> 
 	assert_true(RunState.combat_snapshot.is_empty())
 
 
+func test_defeat_offers_a_once_per_run_revive_via_ad_stub() -> void:
+	_root._on_character_chosen(_revenant())
+	var node_id: int = _root._map_screen.graph.start_node_ids[0]
+	_root._on_map_node_chosen(node_id, MapNode.NodeType.COMBAT)
+
+	var combat: CombatState = _root._combat_screen._combat
+	combat.player.current_hp = 0
+	_root._on_combat_finished(CombatState.Outcome.DEFEAT)
+
+	assert_eq(_root._current_screen, _root._combat_screen, "an accepted revive should keep the player in the fight")
+	assert_gt(combat.player.current_hp, 0)
+	assert_false(AdStub.can_offer_revive(), "revive should be spent for the rest of the run")
+
+	# A second defeat in the same run has no revive left — the run ends.
+	combat.player.current_hp = 0
+	_root._on_combat_finished(CombatState.Outcome.DEFEAT)
+	assert_eq(_root._current_screen, _root._main_menu)
+	assert_false(RunState.has_active_run)
+
+
 func test_resuming_a_run_saved_mid_combat_restores_the_fight() -> void:
 	_root._on_character_chosen(_revenant())
 	var node_id: int = _root._map_screen.graph.start_node_ids[0]
