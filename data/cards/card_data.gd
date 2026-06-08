@@ -27,4 +27,4 @@ func to_definition() -> CardDefinition:
 			entry.get("value", 0),
 			entry.get("status", StatusTypes.Type.STRENGTH)
 		))
-	return CardDefinition.new(id, display_name, cost, card_type, converted_effects, exhausts)
+	return CardDefinition.new(id, display_name, cost, card_type, converted_effects, exhausts, description)
