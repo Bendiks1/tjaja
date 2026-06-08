@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/cards/card_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"battle_trance"
+display_name = "Battle Trance"
+cost = 1
+card_type = 1
+exhausts = true
+description = "Draw 3 cards. Exhaust."
+effects = [{"kind": 3, "target": 0, "value": 3}]

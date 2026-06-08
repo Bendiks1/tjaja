@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/cards/card_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"defend"
+display_name = "Defend"
+cost = 1
+card_type = 1
+exhausts = false
+description = "Gain 5 Block."
+effects = [{"kind": 1, "target": 0, "value": 5}]

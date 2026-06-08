@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"grave_rat"
+display_name = "Grave Rat"
+max_hp = 18
+rank = 0
+flavor_text = "A bloated rat that gnawed its way out of a shallow grave."
+move_pattern = [{"kind": 0, "value": 5}, {"kind": 1, "value": 4}, {"kind": 3, "value": 1, "status": 1}]
