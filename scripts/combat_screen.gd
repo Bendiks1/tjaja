@@ -5,6 +5,11 @@ extends Control
 ## into UI updates is exactly the kind of bridging the architecture reserves
 ## for a controller layer above game_logic/.
 
+## Fired after each event batch is rendered while the fight is still ongoing —
+## the run-loop controller uses this as the checkpoint to persist a fresh
+## CombatSnapshot, so the app can be killed mid-fight and resumed exactly here.
+signal state_changed
+
 const CardViewScene: PackedScene = preload("res://scenes/components/card_view.tscn")
 const EnemyViewScene: PackedScene = preload("res://scenes/components/enemy_view.tscn")
 
@@ -49,6 +54,19 @@ func start_encounter(
 	_apply_events(_combat.start_combat())
 
 
+## Re-enters an in-progress encounter restored by CombatSnapshot — same
+## rendering as a fresh start, just without replaying `start_combat()`'s
+## events (the fight is already underway).
+func resume_encounter(combat: CombatState) -> void:
+	_combat = combat
+	_awaiting_target_for = -1
+	_rebuild_enemy_views()
+	_refresh_player_stats()
+	_refresh_enemy_views()
+	_rebuild_hand()
+	_refresh_prompt()
+
+
 func _rebuild_enemy_views() -> void:
 	for child in _enemy_row.get_children():
 		child.queue_free()
@@ -76,6 +94,8 @@ func _apply_events(events: Array[Dictionary]) -> void:
 		if event.get("type") == "combat_ended":
 			_on_combat_ended(event.get("outcome"))
 			return
+
+	state_changed.emit()
 
 
 func _refresh_player_stats() -> void:
