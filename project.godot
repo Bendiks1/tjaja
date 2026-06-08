@@ -1,0 +1,50 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Deck Builder Roguelike"
+config/description="Solo offline deck-building roguelike for short mobile sessions."
+run/main_scene="res://scenes/screens/game_root.tscn"
+config/features=PackedStringArray("4.3", "Mobile")
+boot_splash/bg_color=Color(0.0784314, 0.0784314, 0.0941176, 1)
+config/icon="res://icon.svg"
+
+[autoload]
+
+EventBus="*res://state/event_bus.gd"
+RunState="*res://state/run_state.gd"
+MetaProgression="*res://state/meta_progression.gd"
+Settings="*res://state/settings.gd"
+SaveSystem="*res://persistence/save_system.gd"
+AdStub="*res://state/ad_stub.gd"
+IAPStub="*res://state/iap_stub.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+window/handheld/orientation="portrait"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
+textures/vram_compression/import_etc2_astc=true

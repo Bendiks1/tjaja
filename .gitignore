@@ -1,0 +1,8 @@
+# Godot 4 generated/local files
+.godot/
+.import/
+export_presets.cfg
+
+# OS / editor cruft
+.DS_Store
+*.tmp

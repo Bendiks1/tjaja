@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"bone_sentinel"
+display_name = "Bone Sentinel"
+max_hp = 26
+rank = 0
+flavor_text = "An animated suit of armor that still guards a tomb long since looted."
+move_pattern = [{"kind": 0, "value": 7}, {"kind": 2, "value": 2, "status": 2}, {"kind": 0, "value": 7}]

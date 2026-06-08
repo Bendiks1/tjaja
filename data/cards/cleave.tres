@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/cards/card_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"cleave"
+display_name = "Cleave"
+cost = 1
+card_type = 0
+exhausts = false
+description = "Deal 8 damage to ALL enemies."
+effects = [{"kind": 0, "target": 2, "value": 8}]

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/cards/card_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"grim_focus"
+display_name = "Grim Focus"
+cost = 1
+card_type = 2
+exhausts = false
+description = "Gain 2 Strength."
+effects = [{"kind": 2, "target": 0, "value": 2, "status": 2}]

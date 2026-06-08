@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"charnel_brute"
+display_name = "Charnel Brute"
+max_hp = 45
+rank = 1
+flavor_text = "Stitched together from a dozen corpses and held together by spite."
+move_pattern = [{"kind": 0, "value": 12}, {"kind": 1, "value": 10}, {"kind": 3, "value": 2, "status": 0}, {"kind": 0, "value": 12}]

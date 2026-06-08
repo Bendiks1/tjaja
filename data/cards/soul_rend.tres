@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/cards/card_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"soul_rend"
+display_name = "Soul Rend"
+cost = 1
+card_type = 0
+exhausts = true
+description = "Deal 8 damage. Apply 1 Vulnerable. Exhaust."
+effects = [{"kind": 0, "target": 1, "value": 8}, {"kind": 2, "target": 1, "value": 1, "status": 0}]

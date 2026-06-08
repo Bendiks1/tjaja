@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ActData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://data/acts/act_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/enemies/grave_rat.tres" id="2_grave_rat"]
+[ext_resource type="Resource" path="res://data/enemies/bone_sentinel.tres" id="3_bone_sentinel"]
+[ext_resource type="Resource" path="res://data/enemies/charnel_brute.tres" id="4_charnel_brute"]
+
+[resource]
+script = ExtResource("1_script")
+act_number = 1
+node_count = 15
+regular_enemies = [ExtResource("2_grave_rat"), ExtResource("3_bone_sentinel")]
+elite_enemies = [ExtResource("4_charnel_brute")]
