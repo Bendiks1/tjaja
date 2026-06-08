@@ -19,6 +19,19 @@ func _init(id: StringName, starting_hp: int, pattern: Array[EnemyIntent]) -> voi
 	_refresh_intent()
 
 
+## Exposed so the encounter can be snapshotted and restored mid-pattern —
+## the index is the only piece of move-selection state that isn't derivable
+## from the static pattern itself.
+func get_pattern_index() -> int:
+	return _pattern_index
+
+
+## Restores a saved cursor position and re-telegraphs to match.
+func set_pattern_index(index: int) -> void:
+	_pattern_index = index % move_pattern.size()
+	_refresh_intent()
+
+
 ## Advances to the next move in the pattern and re-telegraphs. Called once the
 ## current intent has been resolved, at the end of the enemy's turn.
 func advance_intent() -> void:
