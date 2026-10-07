@@ -25,7 +25,7 @@
     {
       "name": "Elkjøp",
       "start_urls": ["https://www.elkjop.no/sitemaps/OCNOELK.pdp.index.sitemap.xml"],
-      "exclude_pattern": "/product/(hvitevarer|epoq-kjokken-og-vaskerom|personlig-pleie-skjonnhet-og-velvare|mobil-nettbrett-og-smartklokker/(mobiltilbehor|klokkereimer-og-tilbehor))/",
+      "exclude_pattern": "/product/(hvitevarer|hjem-rengjoring-og-kjokkenutstyr|epoq-kjokken-og-vaskerom|personlig-pleie-skjonnhet-og-velvare|mobil-nettbrett-og-smartklokker/(mobiltilbehor|klokkereimer-og-tilbehor))/",
       "link_pattern": "/product/",
       "max_pages": 300,
       "concurrency": 8,
