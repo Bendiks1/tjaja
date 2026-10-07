@@ -1,0 +1,31 @@
+{
+  "threshold": 0.90,
+  "database": "prisvakt.db",
+  "notify": {
+    "ntfy_topic": "",
+    "webhook_url": ""
+  },
+  "sites": [
+    {
+      "name": "Komplett",
+      "start_urls": ["https://www.komplett.no/sitemap.xml"],
+      "link_pattern": "/product/",
+      "max_pages": 300,
+      "delay": 2
+    },
+    {
+      "name": "Power",
+      "start_urls": ["https://www.power.no/sitemap.xml"],
+      "link_pattern": "/p-\\d+",
+      "max_pages": 300,
+      "delay": 2
+    },
+    {
+      "name": "Elkjøp",
+      "start_urls": ["https://www.elkjop.no/sitemap.xml"],
+      "link_pattern": "/product/",
+      "max_pages": 300,
+      "delay": 2
+    }
+  ]
+}
