@@ -1,0 +1,17 @@
+[Unit]
+Description=Prisvakt – prisovervåking med alarm
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=prisvakt
+WorkingDirectory=/opt/prisvakt
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/prisvakt/browsers
+Environment=PYTHONUNBUFFERED=1
+# Ny runde starter 30 min etter at forrige er ferdig
+ExecStart=/opt/prisvakt/venv/bin/python -m prisvakt --every 30
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

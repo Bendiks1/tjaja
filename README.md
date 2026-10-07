@@ -11,6 +11,37 @@ python -m prisvakt --every 60         # sjekk hver time
 python -m unittest discover -s tests  # tester
 ```
 
+## Nettleser-modus (Playwright)
+For butikker som laster priser med JavaScript eller stopper enkle forespørsler, sett `"browser": true`
+på butikken (på som standard for Komplett). Da hentes sidene med ekte Chromium. Det er mye tregere
+(~1 side/s mot 5–9), så bruk det bare der det trengs.
+```
+pip install playwright
+playwright install --with-deps chromium
+```
+Sitemaps hentes fortsatt uten nettleser. Bare hvis det feiler, brukes nettleseren.
+
+## Kjøre på Proxmox
+Anbefalt: **en egen Debian 12/13-LXC** (unprivileged). Det er lettere enn en VM og holder til dette.
+
+| | LXC |
+|---|---|
+| CPU | 2 kjerner |
+| RAM | 2 GB (1 GB holder uten `browser`) |
+| Disk | 10 GB (Chromium ~500 MB, databasen vokser sakte) |
+
+Inne i containeren, som root:
+```
+apt-get update && apt-get install -y curl
+curl -fsSL https://raw.githubusercontent.com/Bendiks1/tjaja/main/deploy/install.sh | sh
+nano /opt/prisvakt/config.json        # sett ntfy_topic og max_pages
+systemctl start prisvakt
+journalctl -u prisvakt -f             # følg med
+```
+`install.sh` lager brukeren `prisvakt`, installerer i `/opt/prisvakt` (venv + Chromium) og setter opp
+systemd-tjenesten `deploy/prisvakt.service`. Tjenesten starter ved oppstart og starter på nytt hvis den krasjer.
+En ny runde starter 30 min etter at forrige er ferdig. Oppdater senere ved å kjøre `install.sh` på nytt.
+
 ## Slik fungerer det
 - Starter på `start_urls` (sitemap `.xml` eller kategorisider), følger lenker som matcher `link_pattern`
   (maks `max_pages`, `delay` sekunder mellom hver side).
@@ -24,7 +55,7 @@ python -m unittest discover -s tests  # tester
 |---|---|
 | Power | ✅ Fungerer. Sitemap fra robots.txt, prisene stemmer med siden. |
 | Elkjøp | ✅ Fungerer. Bedriftspris uten mva blir ignorert, bare vanlig pris brukes. |
-| Komplett | ⚠️ Ikke verifisert. Svarte ikke fra skyserveren testen kjørte på (blokkerer trolig datasenter-IP-er). Prøv hjemmefra. |
+| Komplett | ⚠️ Ikke verifisert. Svarte ikke fra skyserveren testen kjørte på (blokkerer trolig datasenter-IP-er). Bruker nettleser-modus. Prøv hjemmefra. |
 
 ## Hastighet
 Alle butikker crawles parallelt. Per butikk styres farten av:

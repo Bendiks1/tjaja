@@ -68,10 +68,27 @@ def _retry_after(e: urllib.error.HTTPError) -> float:
 def crawl_site(site: dict, fetcher=fetch, sleep=time.sleep):
     """Generator som gir Product for hver vare funnet.
 
+    Med "browser": true i site hentes sidene med ekte nettleser (Playwright).
+    """
+    if not (site.get("browser") and fetcher is fetch):
+        yield from _crawl(site, fetcher, sleep)
+        return
+    from .browser import BrowserFetcher
+    browser = BrowserFetcher()
+    try:
+        yield from _crawl(site, browser, sleep)
+    finally:
+        browser.close()
+
+
+def _crawl(site: dict, fetcher, sleep):
+    """Selve crawlingen.
+
     site: name, start_urls (kategorisider eller sitemap .xml), max_pages (0 = alle),
           concurrency (samtidige forespørsler), delay (minste sek mellom forespørsler),
           link_pattern (regex for lenker som skal følges),
-          exclude_pattern (regex for lenker som skal hoppes over, f.eks. kategorier).
+          exclude_pattern (regex for lenker som skal hoppes over, f.eks. kategorier),
+          browser (true = hent med Playwright).
     """
     name = site["name"]
     host = urlparse(site["start_urls"][0]).netloc
@@ -80,6 +97,7 @@ def crawl_site(site: dict, fetcher=fetch, sleep=time.sleep):
 
     def wanted(u: str) -> bool:
         return (not pattern or pattern.search(u)) and not (exclude and exclude.search(u))
+
     throttle = Throttle(site.get("delay", 0.5), sleep)
     queue, seen = deque(site["start_urls"]), set(site["start_urls"])
     retries: dict[str, int] = {}

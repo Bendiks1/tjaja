@@ -8,11 +8,12 @@
   "sites": [
     {
       "name": "Komplett",
+      "browser": true,
       "start_urls": ["https://www.komplett.no/sitemap.xml"],
       "link_pattern": "/product/",
       "max_pages": 300,
-      "concurrency": 8,
-      "delay": 0.1
+      "concurrency": 3,
+      "delay": 0.3
     },
     {
       "name": "Power",
