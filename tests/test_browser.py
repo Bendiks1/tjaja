@@ -32,6 +32,16 @@ class _Handler(http.server.BaseHTTPRequestHandler):
 
 @unittest.skipUnless(importlib.util.find_spec("playwright"), "playwright ikke installert")
 class BrowserTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from prisvakt.browser import BrowserFetcher
+        try:
+            BrowserFetcher().close()
+        except Exception as e:
+            if "Executable doesn't exist" in str(e):
+                raise unittest.SkipTest("Chromium ikke installert (playwright install chromium)")
+            raise
+
     def test_reads_price_rendered_by_javascript(self):
         server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _Handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
