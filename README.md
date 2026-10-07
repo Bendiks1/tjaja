@@ -26,9 +26,24 @@ python -m unittest discover -s tests  # tester
 | Elkjøp | ✅ Fungerer. Bedriftspris uten mva blir ignorert, bare vanlig pris brukes. |
 | Komplett | ⚠️ Ikke verifisert. Svarte ikke fra skyserveren testen kjørte på (blokkerer trolig datasenter-IP-er). Prøv hjemmefra. |
 
+## Hastighet
+Alle butikker crawles parallelt. Per butikk styres farten av:
+- `concurrency`: antall samtidige forespørsler
+- `delay`: minste tid i sekunder mellom hver forespørsel (maks `1/delay` sider/s)
+
+Hvis butikken svarer 429/503 («for mange forespørsler»), dobles pausen automatisk, og `Retry-After`
+følges. Siden prøves på nytt, og farten går gradvis opp igjen. Etter 25 feil på rad (blokkert)
+avbrytes den butikken for denne runden.
+
+Målt 7. okt. 2026 med `concurrency: 8, delay: 0.1` (kort test, ingen 429 fra noen av butikkene):
+
+| Butikk | Varer i sitemap | Fart | Full runde (`max_pages: 0`) |
+|---|---|---|---|
+| Power | ~36 600 | ~8,8 sider/s | ~1 time |
+| Elkjøp | ~436 000 | ~4,7 sider/s (store sider, ~700 KB) | ~26 timer |
+
 ## Merk
-- `max_pages` er antall sider per kjøring (sitemap-filer teller også). Med `0` sjekkes alle varene,
-  men Elkjøp har titusenvis av varer, og med `delay: 2` tar en full runde mange timer.
+- `max_pages` er antall sider per kjøring (sitemap-filer teller også). `0` = alle.
 - Butikkene kan blokkere roboter eller bytte struktur. Sitemap-URL-er og `link_pattern` i
   `config.example.json` er utgangspunkt som må verifiseres mot hver butikk; sjekk også vilkårene deres.
 - Sider som laster priser kun med JavaScript uten JSON-LD vil ikke gi treff.

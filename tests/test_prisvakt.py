@@ -2,11 +2,14 @@ import json
 import os
 import sys
 import tempfile
+import threading
+import time
 import unittest
+import urllib.error
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from prisvakt import cli
-from prisvakt.crawler import crawl_site
+from prisvakt.crawler import Throttle, crawl_site
 from prisvakt.db import Store
 from prisvakt.extract import extract_products, parse_price
 
@@ -54,6 +57,44 @@ class T(unittest.TestCase):
             cfg = {"sites": [site], "threshold": 0.9}
             counts = [cli.run_once(cfg, store, crawl) for _ in range(3)]
         self.assertEqual(counts, [0, 1, 0])  # alarm én gang, ikke gjentatt
+
+
+    def test_backoff_on_429_and_retry(self):
+        calls = []
+
+        def fetcher(u):
+            calls.append(u)
+            if len(calls) == 1:
+                raise urllib.error.HTTPError(u, 429, "Too Many", {"Retry-After": "0"}, None)
+            return page("TV", "100")
+        site = {"name": "T", "start_urls": ["https://shop.no/p"], "delay": 0, "concurrency": 2}
+        found = list(crawl_site(site, fetcher=fetcher, sleep=lambda _: None))
+        self.assertEqual(len(calls), 2)  # prøvde på nytt
+        self.assertEqual(len(found), 1)
+
+    def test_throttle_doubles_and_recovers(self):
+        th = Throttle(0.25, sleep=lambda _: None)
+        self.assertEqual(th.slow_down(), 0.5)
+        self.assertEqual(th.slow_down(), 1.0)
+        for _ in range(200):
+            th.ok()
+        self.assertEqual(th.delay, 0.25)
+
+    def test_runs_requests_concurrently(self):
+        active, peak, lock = [0], [0], threading.Lock()
+        urls = [f"https://shop.no/product/{i}" for i in range(8)]
+
+        def fetcher(u):
+            with lock:
+                active[0] += 1
+                peak[0] = max(peak[0], active[0])
+            time.sleep(0.05)
+            with lock:
+                active[0] -= 1
+            return page("X", "10", url=u)
+        site = {"name": "T", "start_urls": urls, "delay": 0, "concurrency": 4}
+        self.assertEqual(len(list(crawl_site(site, fetcher=fetcher))), 8)
+        self.assertGreater(peak[0], 1)
 
 
 if __name__ == "__main__":
