@@ -70,11 +70,16 @@ def crawl_site(site: dict, fetcher=fetch, sleep=time.sleep):
 
     site: name, start_urls (kategorisider eller sitemap .xml), max_pages (0 = alle),
           concurrency (samtidige forespørsler), delay (minste sek mellom forespørsler),
-          link_pattern (regex for lenker som skal følges).
+          link_pattern (regex for lenker som skal følges),
+          exclude_pattern (regex for lenker som skal hoppes over, f.eks. kategorier).
     """
     name = site["name"]
     host = urlparse(site["start_urls"][0]).netloc
     pattern = re.compile(site["link_pattern"]) if site.get("link_pattern") else None
+    exclude = re.compile(site["exclude_pattern"]) if site.get("exclude_pattern") else None
+
+    def wanted(u: str) -> bool:
+        return (not pattern or pattern.search(u)) and not (exclude and exclude.search(u))
     throttle = Throttle(site.get("delay", 0.5), sleep)
     queue, seen = deque(site["start_urls"]), set(site["start_urls"])
     retries: dict[str, int] = {}
@@ -125,11 +130,11 @@ def crawl_site(site: dict, fetcher=fetch, sleep=time.sleep):
                 throttle.ok()
                 if url.endswith((".xml", ".xml.gz")) or "<urlset" in body[:500] or "<sitemapindex" in body[:500]:
                     page_urls, subs = extract_sitemap_urls(body)
-                    links = subs + [u for u in page_urls if not pattern or pattern.search(u)]
+                    links = subs + [u for u in page_urls if wanted(u)]
                 else:
                     yield from extract_products(body, url)
                     links = [u for u in extract_links(body, url)
-                             if urlparse(u).netloc == host and (not pattern or pattern.search(u))]
+                             if urlparse(u).netloc == host and wanted(u)]
                 for u in links:
                     if u not in seen:
                         seen.add(u)

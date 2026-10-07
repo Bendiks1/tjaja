@@ -72,6 +72,19 @@ class T(unittest.TestCase):
         self.assertEqual(len(calls), 2)  # prøvde på nytt
         self.assertEqual(len(found), 1)
 
+    def test_exclude_pattern_skips_categories(self):
+        sitemap = ('<urlset><url><loc>https://shop.no/product/hvitevarer/1</loc></url>'
+                   '<url><loc>https://shop.no/product/gaming/2</loc></url></urlset>')
+        fetched = []
+
+        def fetcher(u):
+            fetched.append(u)
+            return sitemap if u.endswith(".xml") else page("X", "10", url=u)
+        site = {"name": "T", "start_urls": ["https://shop.no/s.xml"], "delay": 0,
+                "exclude_pattern": "/product/hvitevarer/"}
+        list(crawl_site(site, fetcher=fetcher))
+        self.assertEqual(sorted(fetched), ["https://shop.no/product/gaming/2", "https://shop.no/s.xml"])
+
     def test_throttle_doubles_and_recovers(self):
         th = Throttle(0.25, sleep=lambda _: None)
         self.assertEqual(th.slow_down(), 0.5)

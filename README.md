@@ -40,10 +40,11 @@ Målt 7. okt. 2026 med `concurrency: 8, delay: 0.1` (kort test, ingen 429 fra no
 | Butikk | Varer i sitemap | Fart | Full runde (`max_pages: 0`) |
 |---|---|---|---|
 | Power | ~36 600 | ~8,8 sider/s | ~1 time |
-| Elkjøp | ~436 000 | ~4,7 sider/s (store sider, ~700 KB) | ~26 timer |
+| Elkjøp | ~436 000 (~398 000 uten hvitevarer, kjøkken & vaskerom, personlig pleie) | ~4,7 sider/s (store sider, ~700 KB) | ~26 timer (~23,5 t med utelatelser) |
 
 ## Merk
 - `max_pages` er antall sider per kjøring (sitemap-filer teller også). `0` = alle.
+- `exclude_pattern`: regex for URL-er som hoppes over, f.eks. kategorier (se Elkjøp i `config.example.json`).
 - Butikkene kan blokkere roboter eller bytte struktur. Sitemap-URL-er og `link_pattern` i
   `config.example.json` er utgangspunkt som må verifiseres mot hver butikk; sjekk også vilkårene deres.
 - Sider som laster priser kun med JavaScript uten JSON-LD vil ikke gi treff.
