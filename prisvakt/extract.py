@@ -85,14 +85,39 @@ def _types(node: dict) -> list[str]:
     return [t] if isinstance(t, str) else list(t)
 
 
+def _offers(offers):
+    """Flater ut Offer/AggregateOffer til enkelt-tilbud (uten å gå inn i priceSpecification)."""
+    for o in offers if isinstance(offers, list) else [offers]:
+        if isinstance(o, dict):
+            if "offers" in o:
+                yield from _offers(o["offers"])
+            yield o
+
+
+def _is_consumer_offer(o: dict) -> bool:
+    """Hopper over bedriftspriser / priser uten mva (f.eks. Elkjøp 'Business Price')."""
+    ect = o.get("eligibleCustomerType")
+    ect_id = ect.get("@id", "") if isinstance(ect, dict) else str(ect or "")
+    if ect_id.rstrip("/").lower().endswith("business") or "excl" in str(o.get("name", "")).lower():
+        return False
+    specs = o.get("priceSpecification")
+    specs = specs if isinstance(specs, list) else [specs] if specs else []
+    if any(isinstance(sp, dict) and sp.get("valueAddedTaxIncluded") is False
+           and parse_price(sp.get("price")) == parse_price(o.get("price")) for sp in specs):
+        return False
+    return True
+
+
 def _offer_prices(offers) -> tuple[float | None, float | None, str]:
-    """Returnerer (laveste pris, høyeste oppgitte før-pris, valuta)."""
+    """Returnerer (laveste forbrukerpris, høyeste oppgitte før-pris, valuta)."""
     prices, was, cur = [], [], "NOK"
-    for o in _walk(offers):
-        cur = o.get("priceCurrency") or cur
+    for o in _offers(offers):
+        if not _is_consumer_offer(o):
+            continue
         p = parse_price(o.get("price", o.get("lowPrice")))
         if p is not None and p > 0:
             prices.append(p)
+            cur = o.get("priceCurrency") or cur
         specs = o.get("priceSpecification")
         for sp in _walk(specs) if specs else []:
             sp_price = parse_price(sp.get("price"))

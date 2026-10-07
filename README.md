@@ -19,7 +19,16 @@ python -m unittest discover -s tests  # tester
   Hver (vare, pris) varsles bare én gang.
 - Varsling: konsoll, pluss valgfritt push til mobil via [ntfy](https://ntfy.sh) (`ntfy_topic`) eller Discord/Slack-webhook.
 
+## Testet mot ekte sider (7. okt. 2026)
+| Butikk | Status |
+|---|---|
+| Power | ✅ Fungerer. Sitemap fra robots.txt, prisene stemmer med siden. |
+| Elkjøp | ✅ Fungerer. Bedriftspris uten mva blir ignorert, bare vanlig pris brukes. |
+| Komplett | ⚠️ Ikke verifisert. Svarte ikke fra skyserveren testen kjørte på (blokkerer trolig datasenter-IP-er). Prøv hjemmefra. |
+
 ## Merk
+- `max_pages` er antall sider per kjøring (sitemap-filer teller også). Med `0` sjekkes alle varene,
+  men Elkjøp har titusenvis av varer, og med `delay: 2` tar en full runde mange timer.
 - Butikkene kan blokkere roboter eller bytte struktur. Sitemap-URL-er og `link_pattern` i
   `config.example.json` er utgangspunkt som må verifiseres mot hver butikk; sjekk også vilkårene deres.
 - Sider som laster priser kun med JavaScript uten JSON-LD vil ikke gi treff.

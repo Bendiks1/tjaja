@@ -23,14 +23,14 @@ def fetch(url: str, timeout: int = 20) -> str:
 def crawl_site(site: dict, fetcher=fetch, sleep=time.sleep):
     """Generator som gir Product for hver vare funnet.
 
-    site: name, start_urls (kategorisider eller sitemap .xml), max_pages,
+    site: name, start_urls (kategorisider eller sitemap .xml), max_pages (0 = alle),
           delay (sek), link_pattern (regex for lenker som skal følges).
     """
     host = urlparse(site["start_urls"][0]).netloc
     pattern = re.compile(site["link_pattern"]) if site.get("link_pattern") else None
     queue, seen = deque(site["start_urls"]), set(site["start_urls"])
-    pages = 0
-    while queue and pages < site.get("max_pages", 200):
+    pages, limit = 0, site.get("max_pages", 200)  # 0 = ingen grense
+    while queue and (not limit or pages < limit):
         url = queue.popleft()
         pages += 1
         try:

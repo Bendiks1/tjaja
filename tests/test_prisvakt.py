@@ -27,6 +27,18 @@ class T(unittest.TestCase):
         [p] = extract_products(page("TV", "4990"), "https://shop.no/x")
         self.assertEqual((p.name, p.price), ("TV", 4990.0))
 
+    def test_ignores_business_ex_vat_offer(self):  # struktur som på elkjop.no
+        ld = {"@type": "Product", "name": "LED", "offers": [
+            {"@type": "Offer", "name": "Standard Price", "price": "998", "priceCurrency": "NOK",
+             "eligibleCustomerType": {"@type": "BusinessEntityType", "@id": "https://schema.org/Public"},
+             "priceSpecification": [{"@type": "UnitPriceSpecification", "price": "798.4",
+                                     "valueAddedTaxIncluded": False}]},
+            {"@type": "Offer", "name": "Business Price (Excl. VAT)", "price": "798.4",
+             "eligibleCustomerType": {"@type": "BusinessEntityType", "@id": "https://schema.org/Business"}}]}
+        html = f'<script type="application/ld+json">{json.dumps(ld)}</script>'
+        [p] = extract_products(html, "https://www.elkjop.no/product/x/1")
+        self.assertEqual(p.price, 998.0)
+
     def test_check_drop(self):
         self.assertIsNotNone(cli.check_drop(99, 1000, None, 0.9))
         self.assertIsNone(cli.check_drop(101, 1000, None, 0.9))

@@ -15,14 +15,14 @@
     },
     {
       "name": "Power",
-      "start_urls": ["https://www.power.no/sitemap.xml"],
+      "start_urls": ["https://www.power.no/services/sitemap.xml"],
       "link_pattern": "/p-\\d+",
       "max_pages": 300,
       "delay": 2
     },
     {
       "name": "Elkjøp",
-      "start_urls": ["https://www.elkjop.no/sitemap.xml"],
+      "start_urls": ["https://www.elkjop.no/sitemaps/OCNOELK.pdp.index.sitemap.xml"],
       "link_pattern": "/product/",
       "max_pages": 300,
       "delay": 2
